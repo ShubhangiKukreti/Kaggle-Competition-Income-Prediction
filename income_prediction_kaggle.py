@@ -11,34 +11,32 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from math import sqrt
 
-def FeatureExtraction(dataFrame,columnName):
+def FeatureExtractionMethod(dataFrame,columnName):
 
-    # OneHeartEncoder
     encoder = OneHotEncoder(sparse = False, handle_unknown = 'ignore')
 
-    #reshape the column
-    column = dataFrame[columnName]
-    column = np.array(column).reshape(-1,1)
+    #reshaping the column
+    temp = dataFrame[columnName]
+    temp = np.array(temp).reshape(-1,1)
 
     #Extract and join the data frame
-    dataFrame = dataFrame.join(pd.DataFrame(encoder.fit_transform(column),columns=encoder.categories_,index=dataFrame.index))
+    dataFrame = dataFrame.join(pd.DataFrame(encoder.fit_transform(temp),columns=encoder.categories_,index=dataFrame.index))
 
     #Remove the Column
     dataFrame = dataFrame.drop([columnName], axis = 1)
 
     return dataFrame
 
-def ExtractingSplFeatures(uniques,dataFrame,columnName):
+def SpecialFeaturesMethod(uniques,dataFrame,columnName):
     
-    # OneHeartEncoder
     encoder = OneHotEncoder(categories = [uniques],sparse = False, handle_unknown = 'ignore')
 
-    #reshape the column
-    column = dataFrame[columnName]
-    column = np.array(column).reshape(-1,1)
-    print(column)
+    #reshaping the column
+    temp = dataFrame[columnName]
+    temp = np.array(temp).reshape(-1,1)
+   
     #Extract the column and join the data frame
-    dataFrame = dataFrame.join(pd.DataFrame(encoder.fit_transform(column),columns=encoder.categories_,index=dataFrame.index))
+    dataFrame = dataFrame.join(pd.DataFrame(encoder.fit_transform(temp),columns=encoder.categories_,index=dataFrame.index))
 
     #Remove the profession Column
     dataFrame = dataFrame.drop([columnName], axis = 1)
@@ -82,17 +80,17 @@ data_test['Hair Color'] = data_test['Hair Color'].replace(['0','unknown'], 'Unkn
 #one hot encoding
 data_unique_prof = data['Profession'].unique()     #getting uniques for Profession
 data_unique_country = data['Country'].unique()     #getting uniques for Country
-data = FeatureExtraction(data, 'Gender')
-data = FeatureExtraction(data, 'University Degree')
-data = FeatureExtraction(data, 'Hair Color')
-data = ExtractingSplFeatures(data_unique_prof, data, 'Profession')
-data = ExtractingSplFeatures(data_unique_country, data, 'Country')
+data = FeatureExtractionMethod(data, 'Gender')
+data = FeatureExtractionMethod(data, 'University Degree')
+data = FeatureExtractionMethod(data, 'Hair Color')
+data = SpecialFeaturesMethod(data_unique_prof, data, 'Profession')
+data = SpecialFeaturesMethod(data_unique_country, data, 'Country')
 
-data_test = FeatureExtraction(data_test, 'Gender')
-data_test = FeatureExtraction(data_test, 'University Degree')
-data_test = FeatureExtraction(data_test, 'Hair Color')
-data_test = ExtractingSplFeatures(data_unique_prof, data_test, 'Profession')
-data_test = ExtractingSplFeatures(data_unique_country, data_test, 'Country')
+data_test = FeatureExtractionMethod(data_test, 'Gender')
+data_test = FeatureExtractionMethod(data_test, 'University Degree')
+data_test = FeatureExtractionMethod(data_test, 'Hair Color')
+data_test = SpecialFeaturesMethod(data_unique_prof, data_test, 'Profession')
+data_test = SpecialFeaturesMethod(data_unique_country, data_test, 'Country')
 
 #splitting data for input and output
 X = data.drop(['Income in EUR'], axis = 1)
